@@ -1,6 +1,6 @@
 const db = require("../db");
 
-// GET MENU
+// GET
 exports.getMenu = (req, res) => {
   db.query("SELECT * FROM menu", (err, result) => {
     if (err) return res.status(500).json(err);
@@ -8,38 +8,40 @@ exports.getMenu = (req, res) => {
   });
 };
 
-// ADD ITEM
-exports.addItem = (req, res) => {
-  const { item_name, price, category_id, stock } = req.body;
+// ADD
+exports.addMenuItem = (req, res) => {
+  const { name, category, price, availability } = req.body;
 
   const sql = `
-    INSERT INTO menu (item_name, price, category_id, stock)
+    INSERT INTO menu (name, category, price, availability)
     VALUES (?, ?, ?, ?)
   `;
 
-  db.query(sql, [item_name, price, category_id, stock], (err) => {
+  db.query(sql, [name, category, price, availability], (err) => {
     if (err) return res.status(500).json(err);
-    res.json({ message: "Item added" });
+    res.json({ message: "Menu item added" });
   });
 };
 
-// UPDATE ITEM
-exports.updateItem = (req, res) => {
-  const { price, stock } = req.body;
+// UPDATE
+exports.updateMenuItem = (req, res) => {
+  const { name, category, price, availability } = req.body;
 
-  const sql = "UPDATE menu SET price=?, stock=? WHERE menu_id=?";
+  const sql = `
+    UPDATE menu 
+    SET name=?, category=?, price=?, availability=? 
+    WHERE id=?
+  `;
 
-  db.query(sql, [price, stock, req.params.id], (err) => {
+  db.query(sql, [name, category, price, availability, req.params.id], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Updated" });
   });
 };
 
-// DELETE ITEM
-exports.deleteItem = (req, res) => {
-  const sql = "DELETE FROM menu WHERE menu_id=?";
-
-  db.query(sql, [req.params.id], (err) => {
+// DELETE
+exports.deleteMenuItem = (req, res) => {
+  db.query("DELETE FROM menu WHERE id=?", [req.params.id], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Deleted" });
   });

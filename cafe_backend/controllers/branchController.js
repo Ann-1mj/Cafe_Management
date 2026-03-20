@@ -1,41 +1,69 @@
 const db = require("../db");
 
-// GET
+// ================= GET ALL BRANCHES =================
 exports.getBranches = (req, res) => {
-  db.query("SELECT * FROM branches", (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json(result);
+  const sql = `
+    SELECT 
+      id,
+      name,
+      location,
+      '' AS contactNumber,
+      '' AS managerName
+    FROM branches
+  `;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log("FETCH ERROR:", err);
+      return res.status(500).json(err);
+    }
+
+    res.json(result); // must return array
   });
 };
 
-// ADD
+// ================= ADD BRANCH =================
 exports.addBranch = (req, res) => {
-  const { branch_name, location } = req.body;
+  const { name, location } = req.body;
 
-  const sql = "INSERT INTO branches (branch_name, location) VALUES (?, ?)";
+  const sql = "INSERT INTO branches (name, location) VALUES (?, ?)";
 
-  db.query(sql, [branch_name, location], (err) => {
-    if (err) return res.status(500).json(err);
-    res.json({ message: "Branch added" });
+  db.query(sql, [name, location], (err) => {
+    if (err) {
+      console.log("INSERT ERROR:", err);
+      return res.status(500).json(err);
+    }
+
+    res.json({ message: "Branch added successfully" });
   });
 };
 
-// UPDATE
+// ================= UPDATE BRANCH =================
 exports.updateBranch = (req, res) => {
-  const { branch_name, location } = req.body;
+  const { name, location } = req.body;
 
-  const sql = "UPDATE branches SET branch_name=?, location=? WHERE branch_id=?";
+  const sql = "UPDATE branches SET name=?, location=? WHERE id=?";
 
-  db.query(sql, [branch_name, location, req.params.id], (err) => {
-    if (err) return res.status(500).json(err);
-    res.json({ message: "Updated" });
+  db.query(sql, [name, location, req.params.id], (err) => {
+    if (err) {
+      console.log("UPDATE ERROR:", err);
+      return res.status(500).json(err);
+    }
+
+    res.json({ message: "Branch updated successfully" });
   });
 };
 
-// DELETE
+// ================= DELETE BRANCH =================
 exports.deleteBranch = (req, res) => {
-  db.query("DELETE FROM branches WHERE branch_id=?", [req.params.id], (err) => {
-    if (err) return res.status(500).json(err);
-    res.json({ message: "Deleted" });
+  const sql = "DELETE FROM branches WHERE id=?";
+
+  db.query(sql, [req.params.id], (err) => {
+    if (err) {
+      console.log("DELETE ERROR:", err);
+      return res.status(500).json(err);
+    }
+
+    res.json({ message: "Branch deleted successfully" });
   });
 };

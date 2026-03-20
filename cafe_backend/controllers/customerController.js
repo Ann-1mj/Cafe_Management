@@ -10,11 +10,11 @@ exports.getCustomers = (req, res) => {
 
 // ADD
 exports.addCustomer = (req, res) => {
-  const { name, phone } = req.body;
+  const { name, phone, email, address } = req.body;
 
-  const sql = "INSERT INTO customers (name, phone) VALUES (?, ?)";
+  const sql = "INSERT INTO customers (name, phone, email, address) VALUES (?, ?, ?, ?)";
 
-  db.query(sql, [name, phone], (err) => {
+  db.query(sql, [name, phone, email, address], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Customer added" });
   });
@@ -22,11 +22,11 @@ exports.addCustomer = (req, res) => {
 
 // UPDATE
 exports.updateCustomer = (req, res) => {
-  const { name, phone } = req.body;
+  const { name, phone, email, address } = req.body;
 
-  const sql = "UPDATE customers SET name=?, phone=? WHERE customer_id=?";
+  const sql = "UPDATE customers SET name=?, phone=?, email=?, address=? WHERE id=?";
 
-  db.query(sql, [name, phone, req.params.id], (err) => {
+  db.query(sql, [name, phone, email, address, req.params.id], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Updated" });
   });
@@ -34,7 +34,7 @@ exports.updateCustomer = (req, res) => {
 
 // DELETE
 exports.deleteCustomer = (req, res) => {
-  db.query("DELETE FROM customers WHERE customer_id=?", [req.params.id], (err) => {
+  db.query("DELETE FROM customers WHERE id=?", [req.params.id], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Deleted" });
   });

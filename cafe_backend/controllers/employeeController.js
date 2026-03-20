@@ -10,11 +10,14 @@ exports.getEmployees = (req, res) => {
 
 // ADD
 exports.addEmployee = (req, res) => {
-  const { name, role, branch_id } = req.body;
+  const { name, role, salary, branchId, phone } = req.body;
 
-  const sql = "INSERT INTO employees (name, role, branch_id) VALUES (?, ?, ?)";
+  const sql = `
+    INSERT INTO employees (name, role, salary, branchId, phone)
+    VALUES (?, ?, ?, ?, ?)
+  `;
 
-  db.query(sql, [name, role, branch_id], (err) => {
+  db.query(sql, [name, role, salary, branchId, phone], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Employee added" });
   });
@@ -22,11 +25,15 @@ exports.addEmployee = (req, res) => {
 
 // UPDATE
 exports.updateEmployee = (req, res) => {
-  const { name, role } = req.body;
+  const { name, role, salary, branchId, phone } = req.body;
 
-  const sql = "UPDATE employees SET name=?, role=? WHERE employee_id=?";
+  const sql = `
+    UPDATE employees 
+    SET name=?, role=?, salary=?, branchId=?, phone=? 
+    WHERE id=?
+  `;
 
-  db.query(sql, [name, role, req.params.id], (err) => {
+  db.query(sql, [name, role, salary, branchId, phone, req.params.id], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Updated" });
   });
@@ -34,7 +41,7 @@ exports.updateEmployee = (req, res) => {
 
 // DELETE
 exports.deleteEmployee = (req, res) => {
-  db.query("DELETE FROM employees WHERE employee_id=?", [req.params.id], (err) => {
+  db.query("DELETE FROM employees WHERE id=?", [req.params.id], (err) => {
     if (err) return res.status(500).json(err);
     res.json({ message: "Deleted" });
   });

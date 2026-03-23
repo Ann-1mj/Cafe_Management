@@ -7,10 +7,10 @@ exports.getBranches = (req, res) => {
       id,
       name,
       location,
-      '' AS contactNumber,
-      '' AS managerName
-    FROM branches
-  `;
+      contactNumber,
+      managerName
+    FROM branches;
+  `
 
   db.query(sql, (err, result) => {
     if (err) {

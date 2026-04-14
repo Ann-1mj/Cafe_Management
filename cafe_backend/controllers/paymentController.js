@@ -20,9 +20,9 @@ exports.addPayment = (req, res) => {
   db.query(
     sql,
     [orderId, amount, paymentMethod, paymentDate, paymentStatus],
-    (err) => {
+    (err, result) => {
       if (err) return res.status(500).json(err);
-      res.json({ message: "Payment added" });
+      res.json({ message: "Payment added", id: result.insertId });
     }
   );
 };

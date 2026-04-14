@@ -1,56 +1,78 @@
 const db = require("../db");
 
-// GET
+// GET ALL ORDERS
 exports.getOrders = (req, res) => {
-  db.query("SELECT * FROM orders", (err, result) => {
-    if (err) return res.status(500).json(err);
-    res.json(result);
+  const sql = `
+    SELECT 
+      id,
+      customerId,
+      branchId,
+      totalAmount,
+      status,
+      created_at AS orderDate
+    FROM orders
+  `;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+    return res.json(result);
   });
 };
 
-// ADD
+// ADD ORDER
 exports.addOrder = (req, res) => {
-  const { customerId, branchId, orderDate, totalAmount, status } = req.body;
+  const { customerId, branchId, totalAmount, status } = req.body;
+  const orderStatus = status || "Pending";
 
   const sql = `
-    INSERT INTO orders (customerId, branchId, orderDate, totalAmount, status)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO orders (customerId, branchId, totalAmount, status)
+    VALUES (?, ?, ?, ?)
   `;
 
   db.query(
     sql,
-    [customerId, branchId, orderDate, totalAmount, status],
-    (err) => {
-      if (err) return res.status(500).json(err);
-      res.json({ message: "Order created" });
+    [customerId, branchId, totalAmount, orderStatus],
+    (err, result) => {
+      if (err) {
+        return res.status(500).json(err);
+      }
+      return res.json({ message: "Order created", id: result.insertId });
     }
   );
 };
 
-// UPDATE
+// UPDATE ORDER
 exports.updateOrder = (req, res) => {
-  const { customerId, branchId, orderDate, totalAmount, status } = req.body;
+  const { customerId, branchId, totalAmount, status } = req.body;
 
   const sql = `
     UPDATE orders 
-    SET customerId=?, branchId=?, orderDate=?, totalAmount=?, status=? 
+    SET customerId=?, branchId=?, totalAmount=?, status=? 
     WHERE id=?
   `;
 
   db.query(
     sql,
-    [customerId, branchId, orderDate, totalAmount, status, req.params.id],
+    [customerId, branchId, totalAmount, status, req.params.id],
     (err) => {
-      if (err) return res.status(500).json(err);
-      res.json({ message: "Updated" });
+      if (err) {
+        return res.status(500).json(err);
+      }
+      return res.json({ message: "Updated" });
     }
   );
 };
 
-// DELETE
+// DELETE ORDER
 exports.deleteOrder = (req, res) => {
-  db.query("DELETE FROM orders WHERE id=?", [req.params.id], (err) => {
-    if (err) return res.status(500).json(err);
-    res.json({ message: "Deleted" });
+  const sql = "DELETE FROM orders WHERE id=?";
+
+  db.query(sql, [req.params.id], (err) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+    return res.json({ message: "Deleted" });
   });
 };

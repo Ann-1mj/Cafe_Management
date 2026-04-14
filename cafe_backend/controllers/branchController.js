@@ -7,8 +7,8 @@ exports.getBranches = (req, res) => {
       id,
       name,
       location,
-      contactNumber,
-      managerName
+      contact,
+      manager
     FROM branches;
   `
 
@@ -24,11 +24,11 @@ exports.getBranches = (req, res) => {
 
 // ================= ADD BRANCH =================
 exports.addBranch = (req, res) => {
-  const { name, location } = req.body;
+  const { name, location, contact, manager } = req.body;
 
-  const sql = "INSERT INTO branches (name, location) VALUES (?, ?)";
+  const sql = "INSERT INTO branches (name, location, contact, manager) VALUES (?, ?, ?, ?)";
 
-  db.query(sql, [name, location], (err) => {
+  db.query(sql, [name, location, contact, manager], (err) => {
     if (err) {
       console.log("INSERT ERROR:", err);
       return res.status(500).json(err);
@@ -40,11 +40,11 @@ exports.addBranch = (req, res) => {
 
 // ================= UPDATE BRANCH =================
 exports.updateBranch = (req, res) => {
-  const { name, location } = req.body;
+  const { name, location, contact, manager } = req.body;
 
-  const sql = "UPDATE branches SET name=?, location=? WHERE id=?";
+  const sql = "UPDATE branches SET name=?, location=?, contact=?, manager=? WHERE id=?";
 
-  db.query(sql, [name, location, req.params.id], (err) => {
+  db.query(sql, [name, location, contact, manager, req.params.id], (err) => {
     if (err) {
       console.log("UPDATE ERROR:", err);
       return res.status(500).json(err);

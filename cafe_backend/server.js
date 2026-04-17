@@ -35,9 +35,9 @@ app.post("/cart", (req, res) => {
     VALUES (?, ?, ?, ?)
   `;
 
-  db.query(sql, [customer_id, item_name, price, quantity], (err) => {
+  db.query(sql, [customer_id, item_name, price, quantity], (err, result) => {
     if (err) return res.status(500).json(err);
-    res.json({ message: "Added to cart" });
+    res.json({ message: "Item added to cart" });
   });
 });
 

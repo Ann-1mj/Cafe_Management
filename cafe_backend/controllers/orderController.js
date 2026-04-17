@@ -34,11 +34,11 @@ exports.addOrder = (req, res) => {
   db.query(
     sql,
     [customerId, branchId, totalAmount, orderStatus],
-    (err, result) => {
+    (err) => {
       if (err) {
         return res.status(500).json(err);
       }
-      return res.json({ message: "Order created", id: result.insertId });
+      return res.json({ message: "Order created" });
     }
   );
 };
